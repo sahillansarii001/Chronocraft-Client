@@ -11,6 +11,11 @@ export default withAuth(
       if (!token) {
         return NextResponse.redirect(new URL('/login', req.url));
       }
+      // If an admin or superadmin tries to visit customer account, redirect them to dashboard
+      if (token.role === 'admin' || token.role === 'superadmin') {
+        const redirectUrl = token.role === 'superadmin' ? '/superadmin/dashboard' : '/admin/dashboard';
+        return NextResponse.redirect(new URL(redirectUrl, req.url));
+      }
     }
 
     // Admin routes — require admin or superadmin
