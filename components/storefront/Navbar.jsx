@@ -147,7 +147,7 @@ export default function Navbar({ hideMobileMenu = false }) {
 
               {/* Account avatar */}
               <Link
-                href={session ? '/account' : '/login'}
+                href={session ? (session.user.role === 'admin' ? '/admin/dashboard' : '/account') : '/login'}
                 className="group relative flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300"
                 aria-label={session ? 'My Account' : 'Login'}
               >

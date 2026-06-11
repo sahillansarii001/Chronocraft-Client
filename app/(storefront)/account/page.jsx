@@ -131,6 +131,13 @@ function AccountPageInner() {
     if (tab && NAV_ITEMS.find((n) => n.key === tab)) setActiveSection(tab);
   }, [searchParams]);
 
+  // Redirect admins away from customer account page
+  useEffect(() => {
+    if (session?.user?.role === 'admin') {
+      router.push('/admin/dashboard');
+    }
+  }, [session, router]);
+
   // Reset on user change
   useEffect(() => {
     setOrders(null);

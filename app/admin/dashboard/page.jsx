@@ -52,7 +52,7 @@ export default function AdminDashboardPage() {
     caseMaterial: '',
     movement: 'Automatic',
     caseSize: '',
-    images: ['https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=600'],
+    images: [],
     tags: '',
   });
 
@@ -62,6 +62,8 @@ export default function AdminDashboardPage() {
 
   const handleImageFile = async (e) => {
     const file = e.target.files[0];
+    // Reset input value so the same file can be selected again
+    e.target.value = null;
     if (!file) return;
 
     // Show local preview immediately
@@ -92,6 +94,7 @@ export default function AdminDashboardPage() {
       setImageUploading(false);
     }
   };
+  const [productToDelete, setProductToDelete] = useState(null);
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orderStatusForm, setOrderStatusForm] = useState({
@@ -107,9 +110,9 @@ export default function AdminDashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Fetch Dashboard Summary & Chart Data
-  const fetchData = async () => {
+  const fetchData = async (silent = false) => {
     if (!session?.user?.accessToken) return;
-    setLoading(true);
+    if (!silent) setLoading(true);
     const token = session.user.accessToken;
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -182,13 +185,20 @@ export default function AdminDashboardPage() {
     } catch (err) {
       console.error('Error fetching admin data:', err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
+    let intervalId;
     if (authStatus === 'authenticated') {
-      fetchData();
+      fetchData(); // initial fetch
+      intervalId = setInterval(() => {
+        fetchData(true); // silent fetch every 60s
+      }, 60000);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, authStatus]);
@@ -251,23 +261,27 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Product Archive
-  const handleArchiveProduct = async (id) => {
-    if (!confirm('Are you sure you want to archive this watch?')) return;
+  // Product Delete
+  const handleDeleteProduct = async () => {
+    if (!productToDelete) return;
+    setActionLoading(true);
     const token = session.user.accessToken;
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
     try {
-      const res = await fetch(`${apiUrl}/admin/products/${id}`, {
+      const res = await fetch(`${apiUrl}/admin/products/${productToDelete._id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to archive');
-      alert('Watch listing archived.');
+      if (!res.ok) throw new Error(data.message || 'Failed to delete');
+      setSuccessMsg('Watch listing deleted.');
+      setProductToDelete(null);
       fetchData();
     } catch (err) {
-      alert(err.message);
+      setErrorMsg(err.message);
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -726,10 +740,10 @@ export default function AdminDashboardPage() {
                                 </button>
                                 {!p.isArchived && (
                                   <button
-                                    onClick={() => handleArchiveProduct(p._id)}
+                                    onClick={() => setProductToDelete(p)}
                                     className="text-xs text-red-400 hover:underline"
                                   >
-                                    Archive
+                                    Delete
                                   </button>
                                 )}
                               </td>
@@ -1074,8 +1088,8 @@ export default function AdminDashboardPage() {
                     required
                     value={productForm.name}
                     onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="Rolex Submariner Date"
+                    placeholder="e.g. Rolex Submariner Date"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
                 <div>
@@ -1097,8 +1111,8 @@ export default function AdminDashboardPage() {
                     required
                     value={productForm.price}
                     onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="850000"
+                    placeholder="e.g. 850000"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
                 <div>
@@ -1107,8 +1121,8 @@ export default function AdminDashboardPage() {
                     type="number"
                     value={productForm.originalPrice}
                     onChange={(e) => setProductForm({ ...productForm, originalPrice: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="950000"
+                    placeholder="e.g. 950000"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
 
@@ -1119,8 +1133,8 @@ export default function AdminDashboardPage() {
                     required
                     value={productForm.stock}
                     onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="1"
+                    placeholder="e.g. 1"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
                 <div>
@@ -1130,8 +1144,8 @@ export default function AdminDashboardPage() {
                     required
                     value={productForm.sku}
                     onChange={(e) => setProductForm({ ...productForm, sku: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="ROL-116610"
+                    placeholder="e.g. ROL-116610"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
                 <div>
@@ -1140,8 +1154,8 @@ export default function AdminDashboardPage() {
                     type="text"
                     value={productForm.movement}
                     onChange={(e) => setProductForm({ ...productForm, movement: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="Automatic"
+                    placeholder="e.g. Automatic"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
                 <div>
@@ -1150,8 +1164,8 @@ export default function AdminDashboardPage() {
                     type="text"
                     value={productForm.dial}
                     onChange={(e) => setProductForm({ ...productForm, dial: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="Black Sunburst"
+                    placeholder="e.g. Black Sunburst"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
                 <div>
@@ -1160,8 +1174,8 @@ export default function AdminDashboardPage() {
                     type="text"
                     value={productForm.caseMaterial}
                     onChange={(e) => setProductForm({ ...productForm, caseMaterial: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="Oystersteel"
+                    placeholder="e.g. Oystersteel"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
                 <div>
@@ -1170,8 +1184,8 @@ export default function AdminDashboardPage() {
                     type="number"
                     value={productForm.caseSize}
                     onChange={(e) => setProductForm({ ...productForm, caseSize: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="41"
+                    placeholder="e.g. 41"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
                 <div>
@@ -1180,8 +1194,8 @@ export default function AdminDashboardPage() {
                     type="text"
                     value={productForm.tags}
                     onChange={(e) => setProductForm({ ...productForm, tags: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                    placeholder="Sport, Dive, Luxury"
+                    placeholder="e.g. Sport, Dive, Luxury"
+                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
                   />
                 </div>
               </div>
@@ -1517,6 +1531,36 @@ export default function AdminDashboardPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL: Delete Confirmation ─────────────────────────────────────── */}
+      {productToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-[#111111] border border-white/10 w-full max-w-md p-6 flex flex-col gap-6 text-center">
+            <h3 className="font-display text-xl font-bold tracking-wider text-red-400 uppercase">
+              Delete Watch?
+            </h3>
+            <p className="font-body text-white/60 text-sm">
+              Are you sure you want to permanently delete <strong className="text-white">{productToDelete.name}</strong>? This action cannot be undone.
+            </p>
+            <div className="flex gap-4 font-body mt-2">
+              <button
+                onClick={() => setProductToDelete(null)}
+                className="flex-1 py-3 bg-transparent border border-white/10 text-white/60 text-xs uppercase tracking-wider hover:text-white hover:border-white/30 transition-colors"
+                disabled={actionLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProduct}
+                className="flex-1 py-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs uppercase tracking-wider hover:bg-red-500 hover:text-white transition-colors"
+                disabled={actionLoading}
+              >
+                {actionLoading ? 'Deleting...' : 'Yes, Delete'}
+              </button>
+            </div>
           </div>
         </div>
       )}

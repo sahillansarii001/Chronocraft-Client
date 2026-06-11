@@ -11,14 +11,6 @@ import ProductCard from '@/components/storefront/ProductCard';
 import useCartStore from '@/lib/store/cartStore';
 import useWishlistStore from '@/lib/store/wishlistStore';
 
-const MOCK_PRODUCTS = [
-  { _id: '1', name: 'Rolex Submariner Date', slug: 'rolex-submariner-date', brand: 'Rolex', price: 850000, condition: 'New', stock: 2, images: [], sku: 'ROL-001', movement: 'Automatic', caseSize: 41, dial: 'Black', caseMaterial: 'Oystersteel', yearOfManufacture: 2021, includedItems: ['Watch', 'Original Box', 'Papers'] },
-  { _id: '2', name: 'Omega Seamaster 300M', slug: 'omega-seamaster-300m', brand: 'Omega', price: 420000, condition: 'New', stock: 1, images: [], sku: 'OMG-001', movement: 'Automatic', caseSize: 42, dial: 'Blue', caseMaterial: 'Stainless Steel', includedItems: ['Watch', 'Box'] },
-  { _id: '3', name: 'Patek Philippe Calatrava', slug: 'patek-philippe-calatrava', brand: 'Patek Philippe', price: 2500000, condition: 'New', stock: 1, images: [], sku: 'PAT-001', movement: 'Manual', caseSize: 38, dial: 'White', caseMaterial: 'White Gold', includedItems: ['Watch', 'Original Box', 'Papers', 'Warranty Card'] },
-  { _id: '4', name: 'Audemars Piguet Royal Oak', slug: 'ap-royal-oak', brand: 'Audemars Piguet', price: 3200000, condition: 'New', stock: 1, images: [], sku: 'AP-001', movement: 'Automatic', caseSize: 41, dial: 'Blue', caseMaterial: 'Stainless Steel', includedItems: ['Watch', 'Box', 'Papers'] },
-  { _id: '5', name: 'Cartier Santos', slug: 'cartier-santos', brand: 'Cartier', price: 550000, condition: 'New', stock: 3, images: [], sku: 'CAR-001', movement: 'Automatic', caseSize: 39, dial: 'Silver', caseMaterial: 'Stainless Steel', includedItems: ['Watch'] },
-  { _id: '6', name: 'IWC Portugieser', slug: 'iwc-portugieser', brand: 'IWC', price: 780000, condition: 'New', stock: 2, images: [], sku: 'IWC-001', movement: 'Automatic', caseSize: 42, dial: 'White', caseMaterial: 'Stainless Steel', includedItems: ['Watch', 'Box', 'Papers'] },
-];
 
 const CONDITION_COLORS = {
   'New': 'bg-emerald-500/20 text-emerald-400',
@@ -56,11 +48,7 @@ export default function ProductDetailPage() {
         if (Array.isArray(data)) setRelatedProducts(data.filter((p) => p.slug !== slug).slice(0, 4));
       })
       .catch(() => {
-        const found = MOCK_PRODUCTS.find((p) => p.slug === slug);
-        if (found) {
-          setProduct(found);
-          setRelatedProducts(MOCK_PRODUCTS.filter((p) => p.brand === found.brand && p.slug !== slug).slice(0, 4));
-        }
+        // Leave product as null
       })
       .finally(() => setLoading(false));
   }, [slug]);

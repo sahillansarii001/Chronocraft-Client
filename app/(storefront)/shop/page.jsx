@@ -7,16 +7,6 @@ import Footer from '@/components/storefront/Footer';
 import ProductCard from '@/components/storefront/ProductCard';
 import FilterSidebar from '@/components/storefront/FilterSidebar';
 
-const MOCK_PRODUCTS = [
-  { _id: '1', name: 'Rolex Submariner Date', slug: 'rolex-submariner-date', brand: 'Rolex', price: 850000, condition: 'New', stock: 2, images: [], sku: 'ROL-001', movement: 'Automatic', caseSize: 41, gender: 'Men' },
-  { _id: '2', name: 'Omega Seamaster 300M', slug: 'omega-seamaster-300m', brand: 'Omega', price: 420000, condition: 'New', stock: 1, images: [], sku: 'OMG-001', movement: 'Automatic', caseSize: 42, gender: 'Men' },
-  { _id: '3', name: 'Patek Philippe Calatrava', slug: 'patek-philippe-calatrava', brand: 'Patek Philippe', price: 2500000, condition: 'New', stock: 1, images: [], sku: 'PAT-001', movement: 'Manual', caseSize: 38, gender: 'Men' },
-  { _id: '4', name: 'Audemars Piguet Royal Oak', slug: 'ap-royal-oak', brand: 'Audemars Piguet', price: 3200000, condition: 'New', stock: 1, images: [], sku: 'AP-001', movement: 'Automatic', caseSize: 41, gender: 'Men' },
-  { _id: '5', name: 'Cartier Santos', slug: 'cartier-santos', brand: 'Cartier', price: 550000, condition: 'New', stock: 3, images: [], sku: 'CAR-001', movement: 'Automatic', caseSize: 39, gender: 'Unisex' },
-  { _id: '6', name: 'IWC Portugieser', slug: 'iwc-portugieser', brand: 'IWC', price: 780000, condition: 'New', stock: 2, images: [], sku: 'IWC-001', movement: 'Automatic', caseSize: 42, gender: 'Men' },
-  { _id: '7', name: 'Rolex Datejust 31', slug: 'rolex-datejust-31', brand: 'Rolex', price: 680000, condition: 'New', stock: 1, images: [], sku: 'ROL-002', movement: 'Automatic', caseSize: 31, gender: 'Women' },
-  { _id: '8', name: 'Cartier Ballon Bleu', slug: 'cartier-ballon-bleu', brand: 'Cartier', price: 480000, condition: 'New', stock: 2, images: [], sku: 'CAR-002', movement: 'Automatic', caseSize: 33, gender: 'Women' },
-];
 
 function SkeletonCard() {
   return (
@@ -98,12 +88,12 @@ function ShopContent() {
       if (append) {
         setProducts((prev) => [...prev, ...fetched]);
       } else {
-        setProducts(fetched.length > 0 ? fetched : filterMockProducts(currentFilters, query));
+        setProducts(fetched);
       }
       setHasMore(fetched.length === 12);
     } catch {
       if (!append) {
-        setProducts(filterMockProducts(currentFilters, query));
+        setProducts([]);
       }
       setHasMore(false);
     } finally {
@@ -112,17 +102,6 @@ function ShopContent() {
     }
   }, []);
 
-  // Client-side filtering of mock data
-  const filterMockProducts = (f, q) => {
-    let results = [...MOCK_PRODUCTS];
-    if (f.brands.length) results = results.filter((p) => f.brands.includes(p.brand));
-    if (f.genders.length) results = results.filter((p) => f.genders.includes(p.gender));
-    if (f.condition) results = results.filter((p) => p.condition === f.condition);
-    if (f.minPrice) results = results.filter((p) => p.price >= Number(f.minPrice));
-    if (f.maxPrice) results = results.filter((p) => p.price <= Number(f.maxPrice));
-    if (q) results = results.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()) || p.brand.toLowerCase().includes(q.toLowerCase()));
-    return results;
-  };
 
   // Initial load and filter change
   useEffect(() => {

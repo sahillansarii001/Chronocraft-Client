@@ -7,14 +7,6 @@ import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
 import ProductCard from '@/components/storefront/ProductCard';
 
-const MOCK_PRODUCTS = [
-  { _id: '1', name: 'Rolex Submariner Date', slug: 'rolex-submariner-date', brand: 'Rolex', price: 850000, condition: 'Excellent', stock: 2, images: [], sku: 'ROL-001', movement: 'Automatic', caseSize: 41 },
-  { _id: '2', name: 'Omega Seamaster 300M', slug: 'omega-seamaster-300m', brand: 'Omega', price: 420000, condition: 'Like New', stock: 1, images: [], sku: 'OMG-001', movement: 'Automatic', caseSize: 42 },
-  { _id: '3', name: 'Patek Philippe Calatrava', slug: 'patek-philippe-calatrava', brand: 'Patek Philippe', price: 2500000, condition: 'New', stock: 1, images: [], sku: 'PAT-001', movement: 'Manual', caseSize: 38 },
-  { _id: '4', name: 'Audemars Piguet Royal Oak', slug: 'ap-royal-oak', brand: 'Audemars Piguet', price: 3200000, condition: 'Excellent', stock: 1, images: [], sku: 'AP-001', movement: 'Automatic', caseSize: 41 },
-  { _id: '5', name: 'Cartier Santos', slug: 'cartier-santos', brand: 'Cartier', price: 550000, condition: 'Good', stock: 3, images: [], sku: 'CAR-001', movement: 'Automatic', caseSize: 39 },
-  { _id: '6', name: 'IWC Portugieser', slug: 'iwc-portugieser', brand: 'IWC', price: 780000, condition: 'Like New', stock: 2, images: [], sku: 'IWC-001', movement: 'Automatic', caseSize: 42 },
-];
 
 const BRANDS_META = {
   rolex: { name: 'Rolex', tagline: 'Crown of Excellence', founded: '1905', origin: 'Geneva, Switzerland' },
@@ -90,13 +82,12 @@ function BrandContent() {
       if (append) {
         setProducts((prev) => [...prev, ...fetched]);
       } else {
-        // Fallback to mock data if API returns empty
-        setProducts(fetched.length > 0 ? fetched : MOCK_PRODUCTS.filter((p) => p.brand === brandName));
+        setProducts(fetched);
       }
       setHasMore(fetched.length === 12);
     } catch {
       if (!append) {
-        setProducts(MOCK_PRODUCTS.filter((p) => p.brand === brandName));
+        setProducts([]);
       }
       setHasMore(false);
     } finally {

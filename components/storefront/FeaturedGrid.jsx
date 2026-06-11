@@ -3,17 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import ProductCard from './ProductCard';
 
-const MOCK_PRODUCTS = [
-  { _id: '1', name: 'Rolex Submariner Date', slug: 'rolex-submariner-date', brand: 'Rolex', price: 850000, condition: 'Excellent', stock: 2, images: ['/images/rolex-submariner.png'], sku: 'ROL-001', movement: 'Automatic', caseSize: 41 },
-  { _id: '2', name: 'Omega Seamaster 300M', slug: 'omega-seamaster-300m', brand: 'Omega', price: 420000, condition: 'Like New', stock: 1, images: ['/images/omega-seamaster.png'], sku: 'OMG-001', movement: 'Automatic', caseSize: 42 },
-  { _id: '3', name: 'Patek Philippe Calatrava', slug: 'patek-philippe-calatrava', brand: 'Patek Philippe', price: 2500000, condition: 'New', stock: 1, images: ['/images/patek-calatrava.png'], sku: 'PAT-001', movement: 'Manual', caseSize: 38 },
-  { _id: '4', name: 'Audemars Piguet Royal Oak', slug: 'ap-royal-oak', brand: 'Audemars Piguet', price: 3200000, condition: 'Excellent', stock: 1, images: ['/images/ap-royal-oak.png'], sku: 'AP-001', movement: 'Automatic', caseSize: 41 },
-  { _id: '5', name: 'Cartier Santos', slug: 'cartier-santos', brand: 'Cartier', price: 550000, condition: 'Good', stock: 3, images: ['/images/cartier-santos.png'], sku: 'CAR-001', movement: 'Automatic', caseSize: 39 },
-  { _id: '6', name: 'IWC Portugieser', slug: 'iwc-portugieser', brand: 'IWC', price: 780000, condition: 'Like New', stock: 2, images: ['/images/iwc-portugieser.png'], sku: 'IWC-001', movement: 'Automatic', caseSize: 42 },
-];
-
 export default function FeaturedGrid() {
-  const [products, setProducts] = useState(MOCK_PRODUCTS);
+  const [products, setProducts] = useState([]);
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
 

@@ -29,9 +29,9 @@ export default function SuperAdminDashboardPage() {
   const [successMsg, setSuccessMsg] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const fetchTenants = async () => {
+  const fetchTenants = async (silent = false) => {
     if (!session?.user?.accessToken) return;
-    setLoading(true);
+    if (!silent) setLoading(true);
     const token = session.user.accessToken;
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -50,13 +50,20 @@ export default function SuperAdminDashboardPage() {
       console.error('Error fetching tenants:', err);
       setErrorMsg('Network error fetching tenants');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
+    let intervalId;
     if (authStatus === 'authenticated') {
       fetchTenants();
+      intervalId = setInterval(() => {
+        fetchTenants(true); // silent fetch every 60s
+      }, 60000);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, authStatus]);
