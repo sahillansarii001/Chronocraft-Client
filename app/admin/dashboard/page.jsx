@@ -43,6 +43,7 @@ export default function AdminDashboardPage() {
   const [productForm, setProductForm] = useState({
     name: '',
     brand: 'Rolex',
+    customBrand: '',
     price: '',
     originalPrice: '',
     condition: 'New',
@@ -214,6 +215,7 @@ export default function AdminDashboardPage() {
 
     const payload = {
       ...productForm,
+      brand: productForm.brand === 'Other' ? productForm.customBrand : productForm.brand,
       price: Number(productForm.price),
       originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : undefined,
       stock: Number(productForm.stock),
@@ -324,9 +326,12 @@ export default function AdminDashboardPage() {
     setEditingProduct(prod);
     const existingImg = prod.images?.[0] || '';
     setImagePreview(existingImg);
+    const predefinedBrands = ['Rolex', 'Omega', 'Patek Philippe', 'Audemars Piguet', 'Cartier', 'IWC', 'Breitling', 'Tag Heuer', 'Longines', 'Tissot', 'Other'];
+    const isCustomBrand = !predefinedBrands.includes(prod.brand) && prod.brand;
     setProductForm({
       name: prod.name,
-      brand: prod.brand,
+      brand: isCustomBrand ? 'Other' : prod.brand,
+      customBrand: isCustomBrand ? prod.brand : '',
       price: prod.price,
       originalPrice: prod.originalPrice || '',
       condition: prod.condition,
@@ -349,6 +354,7 @@ export default function AdminDashboardPage() {
     setProductForm({
       name: '',
       brand: 'Rolex',
+      customBrand: '',
       price: '',
       originalPrice: '',
       condition: 'New',
@@ -1094,15 +1100,27 @@ export default function AdminDashboardPage() {
                 </div>
                 <div>
                   <label className="block text-white/40 text-xs uppercase tracking-wider mb-2">Brand</label>
-                  <select
-                    value={productForm.brand}
-                    onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}
-                    className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
-                  >
-                    {['Rolex', 'Omega', 'Patek Philippe', 'Audemars Piguet', 'Cartier', 'IWC', 'Breitling', 'Tag Heuer', 'Longines', 'Tissot', 'Other'].map((b) => (
-                      <option key={b} value={b}>{b}</option>
-                    ))}
-                  </select>
+                  <div className="space-y-4">
+                    <select
+                      value={productForm.brand}
+                      onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}
+                      className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white focus:outline-none focus:border-[#C9A84C]"
+                    >
+                      {['Rolex', 'Omega', 'Patek Philippe', 'Audemars Piguet', 'Cartier', 'IWC', 'Breitling', 'Tag Heuer', 'Longines', 'Tissot', 'Other'].map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+                    {productForm.brand === 'Other' && (
+                      <input
+                        type="text"
+                        required
+                        value={productForm.customBrand}
+                        onChange={(e) => setProductForm({ ...productForm, customBrand: e.target.value })}
+                        placeholder="Enter custom brand name"
+                        className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-[#C9A84C]"
+                      />
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-white/40 text-xs uppercase tracking-wider mb-2">Price (INR)</label>
