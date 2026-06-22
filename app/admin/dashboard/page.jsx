@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -18,6 +18,16 @@ export default function AdminDashboardPage() {
   const [salesData, setSalesData] = useState([]);
   
   const [products, setProducts] = useState([]);
+  const [productPage, setProductPage] = useState(1);
+  const [productTotalPages, setProductTotalPages] = useState(1);
+  const productPageRef = useRef(1);
+
+  const handleProductPageChange = (newPage) => {
+    setProductPage(newPage);
+    productPageRef.current = newPage;
+    fetchData();
+  };
+
   const [orders, setOrders] = useState([]);
   const [orderFilter, setOrderFilter] = useState('All');
   const [orderSearchQuery, setOrderSearchQuery] = useState('');
@@ -139,12 +149,17 @@ export default function AdminDashboardPage() {
       }
 
       // 3. Fetch Products
-      const prodRes = await fetch(`${apiUrl}/admin/products`, {
+      const prodRes = await fetch(`${apiUrl}/admin/products?page=${productPageRef.current}&limit=20`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (prodRes.ok) {
         const pData = await prodRes.json();
-        setProducts(pData || []);
+        if (Array.isArray(pData)) {
+          setProducts(pData);
+        } else {
+          setProducts(pData.products || []);
+          setProductTotalPages(pData.totalPages || 1);
+        }
       }
 
       // 4. Fetch Orders
@@ -757,6 +772,29 @@ export default function AdminDashboardPage() {
                           ))}
                         </tbody>
                       </table>
+                    </div>
+                  )}
+
+                  {/* Pagination Controls */}
+                  {productTotalPages > 1 && (
+                    <div className="flex justify-between items-center mt-6">
+                      <button
+                        disabled={productPage === 1}
+                        onClick={() => handleProductPageChange(productPage - 1)}
+                        className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider ${productPage === 1 ? 'bg-white/5 text-white/30 cursor-not-allowed' : 'bg-[#1A1A1A] text-white hover:bg-[#C9A84C] hover:text-black transition-colors'}`}
+                      >
+                        Previous
+                      </button>
+                      <span className="text-white/50 text-sm font-body">
+                        Page {productPage} of {productTotalPages}
+                      </span>
+                      <button
+                        disabled={productPage === productTotalPages}
+                        onClick={() => handleProductPageChange(productPage + 1)}
+                        className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider ${productPage === productTotalPages ? 'bg-white/5 text-white/30 cursor-not-allowed' : 'bg-[#1A1A1A] text-white hover:bg-[#C9A84C] hover:text-black transition-colors'}`}
+                      >
+                        Next
+                      </button>
                     </div>
                   )}
                 </div>
