@@ -21,7 +21,7 @@ export default function AboutPage() {
               Chrono Craft
             </h1>
             <p className="text-white/60 text-lg leading-relaxed max-w-2xl mx-auto">
-              Preserving horological history. We are a premier platform dedicated to sourcing, authenticating, and delivering the world&apos;s most sought-after brand-new luxury timepieces.
+              We are a premier platform dedicated to sourcing and delivering the world&apos;s most sought-after premium first-copy luxury timepieces, crafted to perfection.
             </p>
           </div>
         </section>
@@ -33,13 +33,13 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-6">
-                Uncompromising Authentication
+                Uncompromising Quality
               </h2>
               <p className="text-white/50 leading-relaxed text-sm mb-4">
-                In the luxury watch market, trust is paramount. Every watch that passes through Chrono Craft undergoes a rigorous multi-point inspection by certified master watchmakers.
+                In the premium watch market, craftsmanship is paramount. Every watch that passes through Chrono Craft undergoes a rigorous multi-point inspection to ensure it perfectly matches the original&apos;s feel and weight.
               </p>
               <p className="text-white/50 leading-relaxed text-sm">
-                From inspecting molecular structures of gold alloys to verifying movement beat frequencies, we guarantee 100% authenticity on every piece. No exceptions.
+                From inspecting the premium materials to verifying movement beat frequencies, we guarantee exceptional quality on every first-copy piece. No exceptions.
               </p>
             </div>
             <div className="aspect-video bg-[#111111] border border-white/5 relative overflow-hidden flex items-center justify-center">
@@ -63,10 +63,10 @@ export default function AboutPage() {
                 The Luxury Experience
               </h2>
               <p className="text-white/50 leading-relaxed text-sm mb-4">
-                We believe shopping for brand-new luxury should feel truly extraordinary. Each timepiece is meticulously inspected, verified, and shipped in premium presentation boxes with original factory packaging.
+                We believe shopping for premium first-copy watches should feel truly extraordinary. Each timepiece is meticulously inspected for quality, and shipped in premium presentation boxes.
               </p>
               <p className="text-white/50 leading-relaxed text-sm">
-                Each delivery includes our signature Chrono Craft Certificate of Authenticity and a comprehensive 2-year warranty coverage, ensuring peace of mind with your investment.
+                Each delivery includes our signature Chrono Craft Quality Assurance and a comprehensive 1-year warranty coverage, ensuring peace of mind with your purchase.
               </p>
             </div>
             <div className="aspect-video bg-[#111111] border border-white/5 relative overflow-hidden flex items-center justify-center md:order-1">
